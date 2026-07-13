@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>16-Week Hybrid Half Marathon Program</title>
+  <style>
+    :root{
+      --bg:#050505;
+      --bg-soft:#0b0b0c;
+      --panel:#101012;
+      --panel-2:#17171a;
+      --text:#f5f0e6;
+      --muted:#aaa59a;
+      --gold:#e3b758;
+      --gold-dark:#b9903c;
+      --line:rgba(227,183,88,.25);
+      --green:#8fc99b;
+      --red:#df8c8c;
+      --shadow:0 22px 65px rgba(0,0,0,.48);
+      --radius:22px;
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 86% 4%,rgba(227,183,88,.14),transparent 28%),
+        radial-gradient(circle at 5% 96%,rgba(185,144,60,.08),transparent 26%),
+        var(--bg);
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      min-height:100vh;
+    }
+
+    button,select,input{font:inherit}
+    button{cursor:pointer}
+
+    .app{
+      display:grid;
+      grid-template-columns:292px minmax(0,1fr);
+      min-height:100vh;
+    }
+
+    aside{
+      position:sticky;
+      top:0;
+      height:100vh;
+      overflow:auto;
+      padding:22px 18px;
+      border-right:1px solid var(--line);
+      background:rgba(5,5,5,.94);
+      backdrop-filter:blur(18px);
+      z-index:10;
+    }
+
+    .brand{
+      padding:20px;
+      border:1px solid var(--line);
+      border-radius:24px;
+      background:linear-gradient(145deg,rgba(227,183,88,.13),rgba(255,255,255,.025));
+      box-shadow:var(--shadow);
+    }
+
+    .kicker{
+      color:var(--gold);
+      font-size:.7rem;
+      font-weight:900;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+    }
+
+    .brand h1{
+      margin:9px 0 10px;
+      font-size:1.35rem;
+      line-height:1.13;
+    }
+
+    .brand p{
+      margin:0;
+      color:var(--muted);
+      font-size:.86rem;
+      line-height:1.55;
+    }
+
+    .side-title{
+      margin:24px 9px 10px;
+      color:var(--muted);
+      text-transform:uppercase;
+      font-size:.68rem;
+      letter-spacing:.15em;
+    }
+
+    .week-nav{
+      display:grid;
+      gap:7px;
+    }
+
+    .week-button{
+      width:100%;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:11px 12px;
+      border-radius:14px;
+      border:1px solid transparent;
+      background:transparent;
+      color:var(--muted);
+      transition:.2s ease;
+    }
+
+    .week-button:hover,
+    .week-button.active{
+      color:var(--text);
+      border-color:var(--line);
+      background:rgba(227,183,88,.08);
+    }
+
+    .week-button small{color:var(--gold)}
+
+    .side-actions{
+      margin-top:22px;
+      display:grid;
+      gap:9px;
+    }
+
+    .btn{
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:var(--panel);
+      color:var(--text);
+      padding:12px 14px;
+      transition:.2s ease;
+    }
+
+    .btn:hover{transform:translateY(-1px);border-color:var(--gold-dark)}
+    .btn.primary{
+      background:linear-gradient(135deg,var(--gold),#f1d482);
+      color:#171209;
+      border-color:transparent;
+      font-weight:900;
+    }
+
+    main{
+      min-width:0;
+      padding:28px;
+    }
+
+    .hero{
+      position:relative;
+      overflow:hidden;
+      padding:30px;
+      border:1px solid var(--line);
+      border-radius:30px;
+      background:
+        linear-gradient(135deg,rgba(227,183,88,.16),rgba(255,255,255,.018)),
+        var(--bg-soft);
+      box-shadow:var(--shadow);
+    }
+
+    .hero:after{
+      content:"";
+      position:absolute;
+      width:340px;
+      height:340px;
+      border-radius:50%;
+      right:-120px;
+      top:-150px;
+      background:rgba(227,183,88,.10);
+      filter:blur(2px);
+    }
+
+    .hero-grid{
+      position:relative;
+      z-index:1;
+      display:grid;
+      grid-template-columns:1.5fr .85fr;
+      gap:25px;
+      align-items:center;
+    }
+
+    .hero h2{
+      margin:10px 0 14px;
+      font-size:clamp(2.25rem,5vw,4.9rem);
+      line-height:.94;
+      letter-spacing:-.045em;
+    }
+
+    .hero p{
+      max-width:780px;
+      color:var(--muted);
+      line-height:1.66;
+      margin:0;
+    }
+
+    .hero-stats{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+
+    .stat{
+      border:1px solid var(--line);
+      background:rgba(0,0,0,.22);
+      border-radius:18px;
+      padding:18px;
+    }
+
+    .stat strong{
+      display:block;
+      color:var(--gold);
+      font-size:1.65rem;
+      margin-bottom:4px;
+    }
+
+    .stat span{
+      color:var(--muted);
+      font-size:.8rem;
+    }
+
+    .toolbar{
+      margin:20px 0;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      flex-wrap:wrap;
+    }
+
+    .filters{
+      display:flex;
+      flex-wrap:wrap;
+      gap:9px;
+    }
+
+    .chip{
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:9px 13px;
+      background:var(--panel);
+      color:var(--muted);
+    }
+
+    .chip.active{
+      background:var(--gold);
+      color:#171209;
+      border-color:var(--gold);
+      font-weight:900;
+    }
+
+    .progress-wrap{
+      flex:1;
+      min-width:250px;
+      max-width:430px;
+    }
+
+    .progress-meta{
+      display:flex;
+      justify-content:space-between;
+      color:var(--muted);
+      font-size:.8rem;
+      margin-bottom:7px;
+    }
+
+    .progress{
+      height:10px;
+      border-radius:999px;
+      overflow:hidden;
+      background:#1b1b1f;
+      border:1px solid rgba(255,255,255,.04);
+    }
+
+    .progress span{
+      display:block;
+      width:0;
+      height:100%;
+      background:linear-gradient(90deg,var(--gold-dark),var(--gold));
+      transition:width .25s ease;
+    }
+
+    .phase-banner{
+      display:grid;
+      grid-template-columns:auto 1fr auto;
+      gap:16px;
+      align-items:center;
+      padding:16px 18px;
+      margin-bottom:17px;
+      border-radius:18px;
+      border:1px solid var(--line);
+      background:var(--panel);
+    }
+
+    .phase-number{
+      width:44px;
+      height:44px;
+      display:grid;
+      place-items:center;
+      border-radius:14px;
+      background:rgba(227,183,88,.12);
+      color:var(--gold);
+      font-weight:1000;
+    }
+
+    .phase-banner h3{margin:0 0 4px}
+    .phase-banner p{margin:0;color:var(--muted);font-size:.88rem}
+    .phase-range{color:var(--gold);font-size:.8rem;font-weight:900}
+
+    .week-card{
+      border:1px solid var(--line);
+      border-radius:28px;
+      overflow:hidden;
+      background:var(--panel);
+      box-shadow:var(--shadow);
+    }
+
+    .week-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:18px;
+      padding:24px;
+      border-bottom:1px solid var(--line);
+      background:linear-gradient(135deg,rgba(227,183,88,.09),transparent);
+    }
+
+    .week-header h3{
+      margin:5px 0 8px;
+      font-size:1.85rem;
+    }
+
+    .week-header p{
+      margin:0;
+      color:var(--muted);
+      line-height:1.5;
+    }
+
+    .week-mileage{
+      min-width:155px;
+      text-align:right;
+    }
+
+    .week-mileage strong{
+      display:block;
+      color:var(--gold);
+      font-size:1.6rem;
+    }
+
+    .week-mileage span{font-size:.76rem;color:var(--muted)}
+
+    .schedule{
+      padding:20px;
+      display:grid;
+      grid-template-columns:repeat(7,minmax(0,1fr));
+      gap:11px;
+    }
+
+    .day{
+      min-width:0;
+      min-height:182px;
+      padding:14px;
+      border-radius:18px;
+      border:1px solid rgba(227,183,88,.14);
+      background:var(--panel-2);
+      transition:.2s ease;
+    }
+
+    .day:hover{
+      transform:translateY(-2px);
+      border-color:var(--gold-dark);
+    }
+
+    .day.rest{opacity:.7}
+
+    .day-top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+      margin-bottom:11px;
+    }
+
+    .day-label{
+      color:var(--muted);
+      font-size:.7rem;
+      letter-spacing:.13em;
+      text-transform:uppercase;
+    }
+
+    .dot{
+      width:9px;
+      height:9px;
+      border-radius:50%;
+      background:var(--gold);
+      box-shadow:0 0 0 5px rgba(227,183,88,.08);
+    }
+
+    .day h4{
+      margin:0 0 8px;
+      font-size:.96rem;
+      line-height:1.28;
+    }
+
+    .day p{
+      margin:0 0 13px;
+      min-height:62px;
+      color:var(--muted);
+      font-size:.79rem;
+      line-height:1.46;
+    }
+
+    .day-footer{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      max-width:100%;
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:6px 8px;
+      color:var(--gold);
+      font-size:.65rem;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .complete{
+      appearance:none;
+      flex:0 0 auto;
+      width:21px;
+      height:21px;
+      border-radius:7px;
+      border:1px solid var(--gold-dark);
+      background:#090909;
+      display:grid;
+      place-items:center;
+    }
+
+    .complete:checked{background:var(--gold)}
+    .complete:checked:after{
+      content:"✓";
+      color:#171209;
+      font-size:.83rem;
+      font-weight:1000;
+    }
+
+    .week-actions{
+      display:flex;
+      justify-content:flex-end;
+      padding:0 20px 20px;
+    }
+
+    .details{
+      display:none;
+      padding:0 20px 20px;
+    }
+
+    .details.open{display:block}
+
+    .detail-grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:13px;
+    }
+
+    .detail-card{
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:18px;
+      background:var(--panel-2);
+    }
+
+    .detail-card h4{
+      margin:0 0 12px;
+      color:var(--gold);
+    }
+
+    .detail-card ul{
+      margin:0;
+      padding-left:18px;
+      color:var(--muted);
+      line-height:1.65;
+      font-size:.88rem;
+    }
+
+    .principles{
+      margin-top:18px;
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:12px;
+    }
+
+    .principle{
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:17px;
+      background:linear-gradient(145deg,rgba(227,183,88,.07),rgba(255,255,255,.012));
+    }
+
+    .principle strong{display:block;margin-bottom:6px}
+    .principle span{color:var(--muted);font-size:.83rem;line-height:1.45}
+
+    .notice{
+      margin-top:18px;
+      padding:18px;
+      border:1px solid var(--line);
+      border-radius:18px;
+      background:var(--panel);
+      color:var(--muted);
+      line-height:1.6;
+    }
+
+    .notice strong{color:var(--text)}
+
+    @media(max-width:1200px){
+      .schedule{grid-template-columns:repeat(4,1fr)}
+      .detail-grid{grid-template-columns:1fr}
+      .principles{grid-template-columns:repeat(2,1fr)}
+    }
+
+    @media(max-width:880px){
+      .app{grid-template-columns:1fr}
+      aside{position:relative;height:auto;border-right:0;border-bottom:1px solid var(--line)}
+      .week-nav{grid-template-columns:repeat(4,1fr)}
+      .hero-grid{grid-template-columns:1fr}
+      main{padding:18px}
+    }
+
+    @media(max-width:590px){
+      .week-nav{grid-template-columns:repeat(2,1fr)}
+      .schedule{grid-template-columns:1fr}
+      .principles{grid-template-columns:1fr}
+      .week-header{flex-direction:column}
+      .week-mileage{text-align:left}
+      .hero{padding:22px}
+    }
+
+    @media print{
+      aside,.toolbar,.week-actions{display:none!important}
+      .app{display:block}
+      main{padding:0}
+      body{background:#fff;color:#111}
+      .hero,.phase-banner,.week-card,.notice,.principle,.detail-card,.day{
+        background:#fff!important;
+        color:#111!important;
+        box-shadow:none;
+        border-color:#aaa;
+      }
+      .hero p,.phase-banner p,.week-header p,.day p,.detail-card ul,.notice,.principle span{color:#333!important}
+      .details{display:block!important}
+      .schedule{grid-template-columns:repeat(4,1fr)}
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <aside>
+    <section class="brand">
+      <div class="kicker">Hybrid Endurance System</div>
+      <h1>16-Week Half Marathon + Strength</h1>
+      <p>Three primary runs, two required lifts, and one optional athletic lift. Running performance leads; strength preserves force, durability, and athleticism.</p>
+    </section>
+
+    <div class="side-title">Program weeks</div>
+    <nav class="week-nav" id="weekNav"></nav>
+
+    <div class="side-actions">
+      <button class="btn primary" onclick="window.print()">Print / Save PDF</button>
+      <button class="btn" id="resetProgress">Reset Progress</button>
+    </div>
+  </aside>
+
+  <main>
+    <section class="hero">
+      <div class="hero-grid">
+        <div>
+          <div class="kicker">Run first • Lift to support</div>
+          <h2>Build the engine.<br>Keep the athlete.</h2>
+          <p>
+            A progressive half-marathon plan for an experienced strength athlete. The plan builds threshold capacity,
+            weekly mileage, and long-run durability while maintaining strength, power, unilateral control, rotation,
+            calf capacity, and the movement variability needed for long-term athleticism.
+          </p>
+        </div>
+        <div class="hero-stats">
+          <div class="stat"><strong>16</strong><span>Weeks</span></div>
+          <div class="stat"><strong>3</strong><span>Runs weekly</span></div>
+          <div class="stat"><strong>2+1</strong><span>Lifts weekly</span></div>
+          <div class="stat"><strong>13.1</strong><span>Race miles</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="toolbar">
+      <div class="filters" id="filters">
+        <button class="chip active" data-phase="all">All</button>
+        <button class="chip" data-phase="base">Base</button>
+        <button class="chip" data-phase="build">Build</button>
+        <button class="chip" data-phase="specific">Race Specific</button>
+        <button class="chip" data-phase="taper">Taper</button>
+      </div>
+
+      <div class="progress-wrap">
+        <div class="progress-meta">
+          <span>Program completion</span>
+          <span id="progressText">0%</span>
+        </div>
+        <div class="progress"><span id="progressBar"></span></div>
+      </div>
+    </section>
+
+    <section id="phaseBanner"></section>
+    <section id="weekContainer"></section>
+
+    <section class="principles">
+      <div class="principle"><strong>Run hierarchy</strong><span>Tempo or race-specific work, one easy aerobic run, and one progressive long run.</span></div>
+      <div class="principle"><strong>Strength hierarchy</strong><span>Power first, primary strength second, durability accessories last. No junk fatigue.</span></div>
+      <div class="principle"><strong>Interference control</strong><span>Lower lifting stays away from tempo and long-run quality whenever possible.</span></div>
+      <div class="principle"><strong>Driving durability</strong><span>Weekly unilateral work, rotation, offset loading, gait, and scapular movement are retained.</span></div>
+    </section>
+
+    <div class="notice">
+      <strong>Starting-point rule:</strong> This plan assumes a current running base of roughly 10–15 miles per week and a comfortable 4–5 mile long run.
+      Reduce all run durations and distances by 15–25% during Weeks 1–4 if your current base is lower. Easy and long runs stay conversational.
+      Tempo effort is controlled and repeatable, not a time trial.
+    </div>
+  </main>
+</div>
+
+<script>
+const weeks = [
+  {w:1,p:"base",pn:"Base I",f:"Establish rhythm and protect recovery",mi:"~11–13 mi",
+   tempo:"10 min easy + 3 × 5 min tempo / 2 min easy + cooldown",
+   easy:"30–35 min Zone 2",
+   long:"4.5–5 mi easy",
+   upper:"Upper strength foundation",
+   lower:"Lower strength + calf capacity",
+   optional:"Athletic micro-dose"},
+  {w:2,p:"base",pn:"Base I",f:"Add easy volume without raising intensity",mi:"~12–14 mi",
+   tempo:"10 min easy + 2 × 8 min tempo / 3 min easy + cooldown",
+   easy:"35 min Zone 2",
+   long:"5.5 mi easy",
+   upper:"Upper push/pull strength",
+   lower:"Lower strength + unilateral",
+   optional:"Throws + carries"},
+  {w:3,p:"base",pn:"Base I",f:"Build consistency and tissue tolerance",mi:"~13–15 mi",
+   tempo:"10 min easy + 20 min steady tempo + cooldown",
+   easy:"35–40 min Zone 2",
+   long:"6 mi easy",
+   upper:"Upper strength progression",
+   lower:"Lower strength progression",
+   optional:"Athletic micro-dose"},
+  {w:4,p:"base",pn:"Base Deload",f:"Absorb the first loading wave",mi:"~10–12 mi",
+   tempo:"10 min easy + 4 × 3 min tempo / 2 min easy + cooldown",
+   easy:"30 min Zone 2",
+   long:"5 mi easy",
+   upper:"Upper volume -25%",
+   lower:"Lower volume -30%",
+   optional:"Mobility only"},
+
+  {w:5,p:"build",pn:"Build I",f:"Increase threshold density",mi:"~14–16 mi",
+   tempo:"10 min easy + 3 × 8 min tempo / 2 min easy + cooldown",
+   easy:"40 min Zone 2",
+   long:"7 mi easy",
+   upper:"Upper strength",
+   lower:"Lower strength + calf",
+   optional:"Athletic micro-dose"},
+  {w:6,p:"build",pn:"Build I",f:"Extend long-run durability",mi:"~15–17 mi",
+   tempo:"10 min easy + 25 min continuous tempo + cooldown",
+   easy:"40–45 min Zone 2",
+   long:"8 mi easy",
+   upper:"Upper strength progression",
+   lower:"Lower strength progression",
+   optional:"Carries + rotation"},
+  {w:7,p:"build",pn:"Build I",f:"Improve fatigue resistance",mi:"~16–18 mi",
+   tempo:"10 min easy + 2 × 12 min tempo / 3 min easy + cooldown",
+   easy:"45 min Zone 2",
+   long:"9 mi easy",
+   upper:"Upper strength",
+   lower:"Lower strength; accessory volume reduced",
+   optional:"Athletic micro-dose"},
+  {w:8,p:"build",pn:"Build Deload",f:"Reduce impact while retaining quality",mi:"~13–15 mi",
+   tempo:"10 min easy + 5 × 4 min tempo / 90 sec easy + cooldown",
+   easy:"35–40 min Zone 2",
+   long:"7 mi easy",
+   upper:"Upper volume -25%",
+   lower:"Lower volume -30%",
+   optional:"Mobility only"},
+
+  {w:9,p:"specific",pn:"Race Specific I",f:"Introduce half-marathon effort",mi:"~17–19 mi",
+   tempo:"10 min easy + 3 × 10 min at HM effort / 3 min easy + cooldown",
+   easy:"45 min Zone 2",
+   long:"10 mi; last 2 mi steady",
+   upper:"Upper strength maintenance",
+   lower:"Lower strength maintenance",
+   optional:"Short athletic micro-dose"},
+  {w:10,p:"specific",pn:"Race Specific I",f:"Build race-pace control",mi:"~18–20 mi",
+   tempo:"10 min easy + 30 min controlled HM effort + cooldown",
+   easy:"45–50 min Zone 2",
+   long:"11 mi easy",
+   upper:"Upper maintenance",
+   lower:"Lower heavy / low volume",
+   optional:"Throws + carries"},
+  {w:11,p:"specific",pn:"Race Specific II",f:"Peak specific endurance",mi:"~19–21 mi",
+   tempo:"10 min easy + 2 × 20 min at HM effort / 4 min easy + cooldown",
+   easy:"45 min Zone 2",
+   long:"12 mi; middle 3 mi steady",
+   upper:"Upper maintenance",
+   lower:"Lower maintenance; no soreness",
+   optional:"Skip if fatigue is elevated"},
+  {w:12,p:"specific",pn:"Specific Deload",f:"Consolidate adaptation",mi:"~15–17 mi",
+   tempo:"10 min easy + 20 min tempo + 4 × 30 sec relaxed fast + cooldown",
+   easy:"40 min Zone 2",
+   long:"9 mi easy",
+   upper:"Upper volume -30%",
+   lower:"Lower volume -35%",
+   optional:"Easy carries / mobility"},
+
+  {w:13,p:"specific",pn:"Peak",f:"Highest long-run exposure",mi:"~19–22 mi",
+   tempo:"10 min easy + 35 min at HM effort + cooldown",
+   easy:"45 min Zone 2",
+   long:"13 mi easy; practice fueling",
+   upper:"Upper maintenance only",
+   lower:"Lower 3 × 3–5; low volume",
+   optional:"Skip"},
+  {w:14,p:"taper",pn:"Taper I",f:"Reduce fatigue and retain rhythm",mi:"~15–17 mi",
+   tempo:"10 min easy + 3 × 8 min at HM effort / 3 min easy + cooldown",
+   easy:"35–40 min Zone 2",
+   long:"10 mi; last 2 mi at HM effort",
+   upper:"Upper 2–3 work sets",
+   lower:"Lower 2–3 work sets",
+   optional:"Skip"},
+  {w:15,p:"taper",pn:"Taper II",f:"Sharpen without accumulating fatigue",mi:"~10–13 mi",
+   tempo:"10 min easy + 2 × 8 min at HM effort / 3 min easy + 4 strides",
+   easy:"30 min Zone 2",
+   long:"7 mi easy",
+   upper:"Upper light maintenance",
+   lower:"Lower light maintenance",
+   optional:"Skip"},
+  {w:16,p:"taper",pn:"Race Week",f:"Freshness and confidence",mi:"Race week",
+   tempo:"25–30 min total with 3 × 3 min at HM effort",
+   easy:"20–25 min easy + 4 strides",
+   long:"RACE — 13.1 mi",
+   upper:"Optional 25-min upper primer",
+   lower:"Optional 20-min lower primer early week",
+   optional:"Skip"}
+];
+
+const phaseInfo = {
+  base:{n:"01",title:"Base Development",desc:"Aerobic consistency, tissue tolerance, and technical strength.",range:"Weeks 1–4"},
+  build:{n:"02",title:"Build Phase",desc:"Longer threshold work and progressive long-run volume while strength remains stable.",range:"Weeks 5–8"},
+  specific:{n:"03",title:"Race-Specific Phase",desc:"Half-marathon effort, fueling practice, and peak long-run durability.",range:"Weeks 9–13"},
+  taper:{n:"04",title:"Taper + Race",desc:"Reduce fatigue while preserving rhythm, stiffness, and confidence.",range:"Weeks 14–16"}
+};
+
+const upperDetails = [
+  "Power: 3–5 × 3 med-ball chest pass, battle-rope burst, or plyometric push-up",
+  "Primary push: incline DB/Smith press 3–4 × 5–8",
+  "Primary pull: pull-up or pulldown 3–4 × 5–8",
+  "Secondary: single-arm row 2–3 × 8–10/side",
+  "Durability: face pull + anti-rotation core 2–3 sets",
+  "Keep 1–3 reps in reserve; no failure"
+];
+
+const lowerDetails = [
+  "Power: box jump or broad jump 3–5 × 2–3",
+  "Primary squat: Smith front squat or sandbag front squat 3–5 × 3–6",
+  "Hinge: RDL 3 × 5–8",
+  "Unilateral: offset split squat or reverse lunge 2–3 × 6–8/side",
+  "Lower leg: straight-knee calf + bent-knee calf 2–4 sets",
+  "Tibialis raise 2–3 × 12–20; stop before soreness"
+];
+
+const optionalDetails = [
+  "20–35 minutes only",
+  "Choose 2 power/skill drills: rotational throw, lateral bound, light jump, slam",
+  "Choose 1 carry: offset, suitcase, overhead, or bear hug",
+  "Choose 1 trunk drill: dead bug, Pallof press, side plank",
+  "No metcon during high-mileage weeks",
+  "Skip when sleep, soreness, or run quality declines"
+];
+
+const weekNav = document.getElementById("weekNav");
+const weekContainer = document.getElementById("weekContainer");
+const phaseBanner = document.getElementById("phaseBanner");
+const progressBar = document.getElementById("progressBar");
+const progressText = document.getElementById("progressText");
+
+let selectedWeek = Number(localStorage.getItem("hybrid-selected-week") || 1);
+let filter = "all";
+
+function phaseLabel(p){
+  return p === "base" ? "Base" : p === "build" ? "Build" : p === "specific" ? "Specific" : "Taper";
+}
+
+function weeklySchedule(week){
+  return [
+    {d:"Mon",t:"Tempo Run",x:week.tempo,b:"Quality Run",rest:false},
+    {d:"Tue",t:"Upper Strength",x:week.upper,b:"Required Lift",rest:false},
+    {d:"Wed",t:"Easy Run",x:week.easy,b:"Aerobic",rest:false},
+    {d:"Thu",t:"Lower Strength",x:week.lower,b:"Required Lift",rest:false},
+    {d:"Fri",t:"Rest / Optional",x:week.optional,b:"Autoregulated",rest:true},
+    {d:"Sat",t:"Long Run",x:week.long,b:"Priority Run",rest:false},
+    {d:"Sun",t:"Full Rest",x:"Walk, mobility, nutrition, and sleep.",b:"Recovery",rest:true}
+  ];
+}
+
+function renderNav(){
+  weekNav.innerHTML = weeks.map(w => `
+    <button class="week-button ${w.w===selectedWeek?"active":""}" data-week="${w.w}">
+      <span>Week ${w.w}</span><small>${phaseLabel(w.p)}</small>
+    </button>
+  `).join("");
+
+  document.querySelectorAll(".week-button").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      selectedWeek = Number(btn.dataset.week);
+      localStorage.setItem("hybrid-selected-week",selectedWeek);
+      renderAll();
+      window.scrollTo({top:0,behavior:"smooth"});
+    });
+  });
+}
+
+function renderPhase(week){
+  const info = phaseInfo[week.p];
+  phaseBanner.innerHTML = `
+    <div class="phase-banner">
+      <div class="phase-number">${info.n}</div>
+      <div><h3>${info.title}</h3><p>${info.desc}</p></div>
+      <div class="phase-range">${info.range}</div>
+    </div>
+  `;
+}
+
+function renderWeek(){
+  const week = weeks.find(w=>w.w===selectedWeek);
+  if(filter !== "all" && week.p !== filter){
+    const next = weeks.find(w=>w.p===filter);
+    if(next){ selectedWeek = next.w; localStorage.setItem("hybrid-selected-week",selectedWeek); }
+  }
+  const current = weeks.find(w=>w.w===selectedWeek);
+  renderPhase(current);
+
+  const days = weeklySchedule(current);
+  weekContainer.innerHTML = `
+    <article class="week-card">
+      <header class="week-header">
+        <div>
+          <div class="kicker">${current.pn}</div>
+          <h3>Week ${current.w}</h3>
+          <p>${current.f}</p>
+        </div>
+        <div class="week-mileage"><strong>${current.mi}</strong><span>estimated weekly running</span></div>
+      </header>
+
+      <div class="schedule">
+        ${days.map((day,i)=>`
+          <div class="day ${day.rest?"rest":""}">
+            <div class="day-top"><span class="day-label">${day.d}</span><span class="dot"></span></div>
+            <h4>${day.t}</h4>
+            <p>${day.x}</p>
+            <div class="day-footer">
+              <span class="badge">${day.b}</span>
+              <input class="complete" type="checkbox" aria-label="Mark ${day.d} complete"
+                data-key="hybrid-w${current.w}-d${i}" ${localStorage.getItem(`hybrid-w${current.w}-d${i}`)==="1"?"checked":""}>
+            </div>
+          </div>
+        `).join("")}
+      </div>
+
+      <div class="week-actions">
+        <button class="btn" id="detailsToggle">Show lifting details</button>
+      </div>
+
+      <div class="details" id="detailsPanel">
+        <div class="detail-grid">
+          <section class="detail-card"><h4>Upper Strength Template</h4><ul>${upperDetails.map(x=>`<li>${x}</li>`).join("")}</ul></section>
+          <section class="detail-card"><h4>Lower Strength Template</h4><ul>${lowerDetails.map(x=>`<li>${x}</li>`).join("")}</ul></section>
+          <section class="detail-card"><h4>Optional Athletic Day</h4><ul>${optionalDetails.map(x=>`<li>${x}</li>`).join("")}</ul></section>
+        </div>
+      </div>
+    </article>
+  `;
+
+  document.querySelectorAll(".complete").forEach(cb=>{
+    cb.addEventListener("change",()=>{
+      localStorage.setItem(cb.dataset.key,cb.checked?"1":"0");
+      updateProgress();
+    });
+  });
+
+  document.getElementById("detailsToggle").addEventListener("click",e=>{
+    const panel = document.getElementById("detailsPanel");
+    panel.classList.toggle("open");
+    e.target.textContent = panel.classList.contains("open") ? "Hide lifting details" : "Show lifting details";
+  });
+}
+
+function updateProgress(){
+  let total=16*7, done=0;
+  for(let w=1;w<=16;w++){
+    for(let d=0;d<7;d++){
+      if(localStorage.getItem(`hybrid-w${w}-d${d}`)==="1") done++;
+    }
+  }
+  const pct = Math.round(done/total*100);
+  progressBar.style.width = pct+"%";
+  progressText.textContent = pct+"%";
+}
+
+function renderAll(){
+  renderNav();
+  renderWeek();
+  updateProgress();
+}
+
+document.querySelectorAll(".chip").forEach(chip=>{
+  chip.addEventListener("click",()=>{
+    document.querySelectorAll(".chip").forEach(c=>c.classList.remove("active"));
+    chip.classList.add("active");
+    filter = chip.dataset.phase;
+    if(filter !== "all"){
+      const first = weeks.find(w=>w.p===filter);
+      if(first){selectedWeek=first.w;localStorage.setItem("hybrid-selected-week",selectedWeek);}
+    }
+    renderAll();
+  });
+});
+
+document.getElementById("resetProgress").addEventListener("click",()=>{
+  if(confirm("Reset all completion checkboxes?")){
+    for(let w=1;w<=16;w++){
+      for(let d=0;d<7;d++) localStorage.removeItem(`hybrid-w${w}-d${d}`);
+    }
+    renderAll();
+  }
+});
+
+renderAll();
+</script>
+</body>
+</html>
